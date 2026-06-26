@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nouveau commerce - Annuaire Artisans BF</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script defer src="assets/js/config.js"></script>
+    <script defer src="assets/js/api.js"></script>
+    <script defer src="assets/js/ui.js"></script>
+    <script defer src="assets/js/business-form.js"></script>
+  </head>
+  <body data-page="business-form">
+    <header class="site-header">
+      <nav class="nav" aria-label="Navigation principale">
+        <a class="brand" href="index.html">
+          <span class="brand-mark">BF</span>
+          <span>Annuaire Artisans</span>
+        </a>
+        <div class="nav-links">
+          <a href="dashboard.html">Dashboard</a>
+          <button data-logout type="button">Deconnexion</button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="page page-narrow">
+      <div class="page-title">
+        <h1>Enregistrer un commerce</h1>
+        <p>
+          Tu peux preparer la fiche tranquillement. Elle restera invisible tant
+          que tu ne la publies pas.
+        </p>
+      </div>
+
+      <form class="panel" data-business-form>
+        <div class="panel-body search-form">
+          <div class="form-grid two">
+            <label class="field">
+              <span>Nom du commerce</span>
+              <input name="name" required placeholder="Ex: Atelier Kadi Couture">
+            </label>
+            <label class="field">
+              <span>Categorie</span>
+              <select name="category" data-category-select data-empty-label="Choisir une categorie" required></select>
+            </label>
+          </div>
+
+          <div class="form-grid two">
+            <label class="field">
+              <span>Telephone direct</span>
+              <input name="phone" required placeholder="+22670000001">
+            </label>
+            <label class="field">
+              <span>Horaires</span>
+              <input name="opening_hours" required placeholder="Lun-Sam, 08h-18h">
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Adresse indicative</span>
+            <input name="address_description" required placeholder="Quartier, repere, secteur">
+          </label>
+
+          <label class="field">
+            <span>Description</span>
+            <textarea name="description" required placeholder="Services proposes, specialites, delais moyens"></textarea>
+          </label>
+
+          <div class="form-grid two">
+            <label class="field">
+              <span>Latitude</span>
+              <input name="latitude" type="number" step="any" required placeholder="12.3714">
+            </label>
+            <label class="field">
+              <span>Longitude</span>
+              <input name="longitude" type="number" step="any" required placeholder="-1.5197">
+            </label>
+          </div>
+
+          <button class="button button-secondary" data-use-location type="button">
+            Utiliser ma position GPS
+          </button>
+
+          <label class="field">
+            <span>Photos du local ou de l'activite</span>
+            <input name="photos" type="file" accept="image/*" multiple>
+          </label>
+
+          <div class="button-row">
+            <button class="button" type="submit">Creer en brouillon</button>
+            <a class="button button-secondary" href="dashboard.html">Annuler</a>
+          </div>
+        </div>
+      </form>
+    </main>
+  </body>
+</html>

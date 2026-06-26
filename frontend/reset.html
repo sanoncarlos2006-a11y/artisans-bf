@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reset mot de passe - Annuaire Artisans BF</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script defer src="assets/js/config.js"></script>
+    <script defer src="assets/js/api.js"></script>
+    <script defer src="assets/js/ui.js"></script>
+    <script defer src="assets/js/reset.js"></script>
+  </head>
+  <body data-page="reset">
+    <header class="site-header">
+      <nav class="nav" aria-label="Navigation principale">
+        <a class="brand" href="index.html">
+          <span class="brand-mark">BF</span>
+          <span>Annuaire Artisans</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html">Accueil</a>
+          <a href="login.html">Connexion</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="page page-narrow">
+      <div class="page-title">
+        <h1>Mot de passe oublie</h1>
+        <p>Pour la demo, le code apparait ici afin que le test reste simple.</p>
+      </div>
+
+      <section class="grid-two">
+        <form class="panel" data-forgot-form>
+          <div class="panel-body search-form">
+            <div class="panel-title">
+              <h2>1. Generer le code</h2>
+            </div>
+            <label class="field">
+              <span>Telephone</span>
+              <input name="phone" autocomplete="tel" required value="+22670000000">
+            </label>
+            <button class="button" type="submit">Generer</button>
+            <p class="pill" data-reset-code hidden></p>
+          </div>
+        </form>
+
+        <form class="panel" data-reset-form>
+          <div class="panel-body search-form">
+            <div class="panel-title">
+              <h2>2. Changer le mot de passe</h2>
+            </div>
+            <label class="field">
+              <span>Telephone</span>
+              <input name="phone" autocomplete="tel" required value="+22670000000">
+            </label>
+            <label class="field">
+              <span>Code</span>
+              <input name="code" required placeholder="2026">
+            </label>
+            <label class="field">
+              <span>Nouveau mot de passe</span>
+              <input name="new_password" type="password" autocomplete="new-password" minlength="6" required>
+            </label>
+            <button class="button" type="submit">Modifier</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

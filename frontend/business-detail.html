@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fiche commerce - Annuaire Artisans BF</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script defer src="assets/js/config.js"></script>
+    <script defer src="assets/js/api.js"></script>
+    <script defer src="assets/js/ui.js"></script>
+    <script defer src="assets/js/map.js"></script>
+    <script defer src="assets/js/detail.js"></script>
+  </head>
+  <body data-page="detail">
+    <header class="site-header">
+      <nav class="nav" aria-label="Navigation principale">
+        <a class="brand" href="index.html">
+          <span class="brand-mark">BF</span>
+          <span>Annuaire Artisans</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html">Accueil</a>
+          <a href="search.html">Recherche</a>
+          <a data-auth-only href="dashboard.html">Dashboard</a>
+          <a data-guest-only href="login.html">Connexion</a>
+          <button data-auth-only data-logout type="button">Deconnexion</button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="page">
+      <section class="detail-layout">
+        <div class="detail-hero">
+          <div class="panel">
+            <div class="panel-body">
+              <div class="business-topline">
+                <span class="pill" data-business-category>Service</span>
+                <span class="status status-published" data-business-rating>Note</span>
+              </div>
+              <div class="page-title">
+                <h1 data-business-name>Chargement...</h1>
+                <p data-business-address>Adresse</p>
+              </div>
+              <p data-business-description class="muted"></p>
+              <div class="business-meta" style="margin-top: 12px;">
+                <span data-business-hours>Horaires</span>
+              </div>
+              <div class="button-row" style="margin-top: 16px;">
+                <a class="button" data-call href="#">Appeler</a>
+                <a class="button button-secondary" data-whatsapp target="_blank" rel="noreferrer" href="#">WhatsApp</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="photo-strip" data-photo-strip></div>
+
+          <section class="panel">
+            <div class="panel-body">
+              <div class="panel-title">
+                <h2>Commentaires</h2>
+              </div>
+              <div class="comments-list" data-comments-list></div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="detail-hero">
+          <div id="detail-map" class="map compact" aria-label="Carte commerce"></div>
+          <form class="panel" data-comment-form>
+            <div class="panel-body search-form">
+              <div class="panel-title">
+                <h2>Ajouter un avis</h2>
+              </div>
+              <label class="field">
+                <span>Nom</span>
+                <input name="author_name" required placeholder="Votre nom">
+              </label>
+              <label class="field">
+                <span>Commentaire</span>
+                <textarea name="content" required placeholder="Ex: travail rapide, accueil correct, prix raisonnable"></textarea>
+              </label>
+              <button class="button" type="submit">Partager l'avis</button>
+            </div>
+          </form>
+        </aside>
+      </section>
+    </main>
+  </body>
+</html>

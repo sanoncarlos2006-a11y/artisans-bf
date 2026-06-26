@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard - Annuaire Artisans BF</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script defer src="assets/js/config.js"></script>
+    <script defer src="assets/js/api.js"></script>
+    <script defer src="assets/js/ui.js"></script>
+    <script defer src="assets/js/dashboard.js"></script>
+  </head>
+  <body data-page="dashboard">
+    <header class="site-header">
+      <nav class="nav" aria-label="Navigation principale">
+        <a class="brand" href="index.html">
+          <span class="brand-mark">BF</span>
+          <span>Annuaire Artisans</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html">Accueil</a>
+          <a href="search.html">Recherche</a>
+          <a data-nav="dashboard" href="dashboard.html">Dashboard</a>
+          <button data-logout type="button">Deconnexion</button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="page">
+      <div class="toolbar">
+        <div>
+          <h1>Mon espace artisan</h1>
+          <p class="muted">Connecte en tant que <span data-user-name>Artisan</span></p>
+        </div>
+        <a class="button" href="business-form.html">Ajouter un commerce</a>
+      </div>
+
+      <section class="quick-stats" aria-label="Statistiques commerce">
+        <div class="stat">
+          <strong data-count-total>0</strong>
+          <span>commerces</span>
+        </div>
+        <div class="stat">
+          <strong data-count-published>0</strong>
+          <span>publies</span>
+        </div>
+        <div class="stat">
+          <strong data-count-draft>0</strong>
+          <span>brouillons</span>
+        </div>
+      </section>
+
+      <section class="panel" style="margin-top: 18px;">
+        <div class="panel-body">
+          <div class="panel-title">
+            <h2>Mes commerces</h2>
+          </div>
+          <div class="dashboard-list" data-dashboard-list></div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

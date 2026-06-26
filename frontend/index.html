@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Annuaire Artisans BF</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script defer src="assets/js/config.js"></script>
+    <script defer src="assets/js/api.js"></script>
+    <script defer src="assets/js/ui.js"></script>
+    <script defer src="assets/js/map.js"></script>
+    <script defer src="assets/js/search.js"></script>
+  </head>
+  <body data-page="home">
+    <header class="site-header">
+      <nav class="nav" aria-label="Navigation principale">
+        <a class="brand" href="index.html">
+          <span class="brand-mark">BF</span>
+          <span>Annuaire Artisans</span>
+        </a>
+        <div class="nav-links">
+          <a data-nav="home" href="index.html">Accueil</a>
+          <a data-nav="search" href="search.html">Recherche</a>
+          <a data-auth-only data-nav="dashboard" href="dashboard.html">Dashboard</a>
+          <a data-guest-only href="login.html">Connexion</a>
+          <button data-auth-only data-logout type="button">Deconnexion</button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="page">
+      <section class="hero-workspace" aria-labelledby="home-title">
+        <div class="panel">
+          <div class="panel-body">
+            <div class="page-title">
+              <h1 id="home-title">Trouver vite un bon artisan pres de soi.</h1>
+              <p>
+                Tape un metier, un nom ou un quartier. Les commerces publies
+                apparaissent dans la liste et sur la carte.
+              </p>
+            </div>
+
+            <form class="search-form" data-search-form>
+              <label class="field">
+                <span>Nom ou quartier</span>
+                <input name="q" type="search" placeholder="Ex: couture, Patte d'Oie">
+              </label>
+              <label class="field">
+                <span>Categorie</span>
+                <select name="category" data-category-select></select>
+              </label>
+              <label class="field">
+                <span>Note minimale</span>
+                <select name="min_rating">
+                  <option value="">Toutes les notes</option>
+                  <option value="4">4/5 et plus</option>
+                  <option value="3">3/5 et plus</option>
+                </select>
+              </label>
+              <div class="button-row">
+                <button class="button" type="submit">Rechercher</button>
+                <button class="button button-secondary" data-search-location type="button">
+                  Utiliser ma position
+                </button>
+              </div>
+            </form>
+
+            <div class="quick-stats" aria-label="Quelques reperes">
+              <div class="stat">
+                <strong>11</strong>
+                <span>metiers couverts</span>
+              </div>
+              <div class="stat">
+                <strong>3</strong>
+                <span>photos possibles</span>
+              </div>
+              <div class="stat">
+                <strong>5</strong>
+                <span>etoiles par avis</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="map" class="map" aria-label="Carte des commerces"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="results-title" style="margin-top: 18px;">
+        <div class="panel-body">
+          <div class="panel-title">
+            <h2 id="results-title">Commerces disponibles</h2>
+            <span class="muted" data-results-count>0 resultat</span>
+          </div>
+          <div class="results-list" data-results-list></div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
