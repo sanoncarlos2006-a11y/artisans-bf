@@ -1,0 +1,47 @@
+# Environnements Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Variables sensibles
+.env
+.env.*
+!.env.example
+
+# Bases locales
+*.db
+*.sqlite
+*.sqlite3
+backend/*.db
+backend/*.sqlite
+backend/*.sqlite3
+
+# Uploads locaux
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Node / frontend tooling
+node_modules/
+dist/
+build/
+.npm/
+
+# IDE et OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Archives de livraison générées
+*.zip
+*.tar.gz

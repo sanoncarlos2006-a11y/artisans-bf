@@ -1,0 +1,50 @@
+name: Backend CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+  push:
+    branches: [develop, main]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+
+jobs:
+  backend-check:
+    name: Python syntax and dependency check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: "backend/requirements.txt"
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Check backend files
+        working-directory: backend
+        run: |
+          if [ -d app ]; then python -m compileall app; else echo "backend/app missing" && exit 1; fi
+
+      - name: Import FastAPI app when available
+        working-directory: backend
+        run: |
+          if [ -f app/main.py ]; then python - <<'PY'
+          import importlib
+          importlib.import_module("app.main")
+          print("app.main import OK")
+          PY
+          fi
