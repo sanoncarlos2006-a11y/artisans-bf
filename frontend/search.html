@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recherche - Annuaire Artisans BF</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script defer src="assets/js/config.js"></script>
+    <script defer src="assets/js/api.js"></script>
+    <script defer src="assets/js/ui.js"></script>
+    <script defer src="assets/js/map.js"></script>
+    <script defer src="assets/js/search.js"></script>
+  </head>
+  <body data-page="search">
+    <header class="site-header">
+      <nav class="nav" aria-label="Navigation principale">
+        <a class="brand" href="index.html">
+          <span class="brand-mark">BF</span>
+          <span>Annuaire Artisans</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html">Accueil</a>
+          <a data-nav="search" href="search.html">Recherche</a>
+          <a data-auth-only href="dashboard.html">Dashboard</a>
+          <a data-guest-only href="login.html">Connexion</a>
+          <button data-auth-only data-logout type="button">Deconnexion</button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="page">
+      <div class="toolbar">
+        <div>
+          <h1>Trouver un service</h1>
+          <p class="muted">Choisis un metier, un quartier ou une note minimale.</p>
+        </div>
+        <span class="pill" data-results-count>0 resultat</span>
+      </div>
+
+      <section class="grid-two">
+        <div class="panel">
+          <div class="panel-body">
+            <form class="search-form" data-search-form>
+              <label class="field">
+                <span>Nom, metier ou quartier</span>
+                <input name="q" type="search" placeholder="Nom, metier ou quartier">
+              </label>
+              <label class="field">
+                <span>Categorie</span>
+                <select name="category" data-category-select></select>
+              </label>
+              <label class="field">
+                <span>Note minimale</span>
+                <select name="min_rating">
+                  <option value="">Toutes les notes</option>
+                  <option value="4">4/5 et plus</option>
+                  <option value="3">3/5 et plus</option>
+                  <option value="2">2/5 et plus</option>
+                </select>
+              </label>
+              <div class="button-row">
+                <button class="button" type="submit">Rechercher</button>
+                <button class="button button-secondary" data-search-location type="button">
+                  Ma position
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div id="map" class="map compact" aria-label="Carte des resultats"></div>
+      </section>
+
+      <section class="panel" style="margin-top: 18px;">
+        <div class="panel-body">
+          <div class="results-list" data-results-list></div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

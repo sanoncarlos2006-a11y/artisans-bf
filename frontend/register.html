@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inscription - Annuaire Artisans BF</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script defer src="assets/js/config.js"></script>
+    <script defer src="assets/js/api.js"></script>
+    <script defer src="assets/js/ui.js"></script>
+    <script defer src="assets/js/auth.js"></script>
+  </head>
+  <body data-page="register">
+    <header class="site-header">
+      <nav class="nav" aria-label="Navigation principale">
+        <a class="brand" href="index.html">
+          <span class="brand-mark">BF</span>
+          <span>Annuaire Artisans</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html">Accueil</a>
+          <a href="search.html">Recherche</a>
+          <a href="login.html">Connexion</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="page page-narrow">
+      <section class="auth-layout">
+        <div class="panel auth-note">
+          <div class="panel-body">
+            <div class="page-title">
+              <h1>Creer un compte</h1>
+              <p>
+                Un artisan peut avoir plusieurs activites. Le meme compte peut donc
+                gerer un atelier, une boutique, un garage ou un service mobile.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <form class="panel" data-register-form>
+          <div class="panel-body search-form">
+            <label class="field">
+              <span>Nom complet</span>
+              <input name="full_name" autocomplete="name" required>
+            </label>
+            <label class="field">
+              <span>Telephone</span>
+              <input name="phone" autocomplete="tel" required placeholder="+22670000000">
+            </label>
+            <label class="field">
+              <span>Mot de passe</span>
+              <input name="password" type="password" autocomplete="new-password" minlength="6" required>
+            </label>
+            <button class="button" type="submit">Creer le compte</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
