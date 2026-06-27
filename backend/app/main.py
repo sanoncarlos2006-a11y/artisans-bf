@@ -1,3 +1,5 @@
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from html import escape
 
 from fastapi import FastAPI
@@ -6,7 +8,14 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.core.config import BACKEND_DIR, settings
+from app.db.session import init_db
 from app.routes import auth_router, businesses_router, health_router, ai_router, comments_router, search_router
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    init_db()
+    yield
 
 
 app = FastAPI(
@@ -17,6 +26,7 @@ app = FastAPI(
     ),
     version="0.1.0",
     docs_url=None,
+    lifespan=lifespan,
 )
 
 # Demo/local frontend ports. Wildcard is only used outside production-like environments.

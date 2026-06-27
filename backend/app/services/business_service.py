@@ -18,6 +18,7 @@ def create_business(db: Session, owner: User, payload: BusinessCreate) -> Busine
         latitude=payload.latitude,
         longitude=payload.longitude,
         address_description=payload.address_description,
+        description=payload.description,
         opening_hours=payload.opening_hours,
         status="draft",
     )

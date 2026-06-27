@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
-from app.db.session import Base
+from app.db.base import Base
 
 
 class Comment(Base):
@@ -9,7 +9,7 @@ class Comment(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     business_id = Column(Integer, ForeignKey("businesses.id"), nullable=False, index=True)
-    user_id = Column(Integer, nullable=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
 
     comment = Column(Text, nullable=False)
     ai_rating = Column(Integer, nullable=False)
@@ -18,3 +18,4 @@ class Comment(Base):
     ai_model = Column(String(100), nullable=False)
 
     business = relationship("Business", back_populates="comments")
+    user = relationship("User", back_populates="comments")

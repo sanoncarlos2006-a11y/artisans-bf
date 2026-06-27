@@ -11,12 +11,13 @@ def recalculate_business_rating(db: Session, business_id: int) -> None:
     if not business:
         return
 
-    if not comments:
+    ratings = [comment.ai_rating for comment in comments if comment.ai_rating is not None]
+    if not ratings:
         business.average_rating = 0.0
-        business.reviews_count = 0
+        business.ratings_count = 0
     else:
-        business.reviews_count = len(comments)
-        business.average_rating = round(sum(comment.ai_rating for comment in comments) / len(comments), 2)
+        business.ratings_count = len(ratings)
+        business.average_rating = round(sum(ratings) / len(ratings), 2)
 
     db.add(business)
     db.commit()

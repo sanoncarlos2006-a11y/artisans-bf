@@ -41,12 +41,18 @@ class BusinessBase(BaseModel):
     latitude: float = Field(ge=-90, le=90)
     longitude: float = Field(ge=-180, le=180)
     address_description: str = Field(min_length=1)
+    description: str | None = Field(default=None, max_length=1000)
     opening_hours: str = Field(min_length=1, max_length=255)
 
     @field_validator("name", "category", "phone", "address_description", "opening_hours")
     @classmethod
     def strip_required_fields(cls, value: str) -> str:
         return _strip_required(value)
+
+    @field_validator("description")
+    @classmethod
+    def strip_description(cls, value: str | None) -> str | None:
+        return _strip_optional(value)
 
 
 class BusinessCreate(BusinessBase):
@@ -60,9 +66,10 @@ class BusinessUpdate(BaseModel):
     latitude: float | None = Field(default=None, ge=-90, le=90)
     longitude: float | None = Field(default=None, ge=-180, le=180)
     address_description: str | None = None
+    description: str | None = Field(default=None, max_length=1000)
     opening_hours: str | None = Field(default=None, max_length=255)
 
-    @field_validator("name", "category", "phone", "address_description", "opening_hours")
+    @field_validator("name", "category", "phone", "address_description", "description", "opening_hours")
     @classmethod
     def strip_optional_fields(cls, value: str | None) -> str | None:
         return _strip_optional(value)
