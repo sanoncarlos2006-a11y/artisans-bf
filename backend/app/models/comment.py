@@ -1,31 +1,20 @@
-from __future__ import annotations
+from sqlalchemy import Column, Float, ForeignKey, Integer, String, Text
+from sqlalchemy.orm import relationship
 
-from datetime import datetime
-
-from sqlalchemy import CheckConstraint, DateTime, Float, ForeignKey, String, Text
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from app.db.base import Base
+from app.db.session import Base
 
 
 class Comment(Base):
     __tablename__ = "comments"
-    __table_args__ = (
-        CheckConstraint("ai_rating IS NULL OR (ai_rating >= 0 AND ai_rating <= 5)", name="ck_comments_ai_rating"),
-    )
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    business_id: Mapped[int] = mapped_column(
-        ForeignKey("businesses.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True,
-    )
-    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
-    content: Mapped[str] = mapped_column(Text, nullable=False)
-    ai_rating: Mapped[float | None] = mapped_column(Float, nullable=True)
-    ai_sentiment: Mapped[str | None] = mapped_column(String(30), nullable=True)
-    ai_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.utcnow)
+    id = Column(Integer, primary_key=True, index=True)
+    business_id = Column(Integer, ForeignKey("businesses.id"), nullable=False, index=True)
+    user_id = Column(Integer, nullable=True, index=True)
 
-    business: Mapped["Business"] = relationship("Business", back_populates="comments")
-    user: Mapped["User | None"] = relationship("User", back_populates="comments")
+    comment = Column(Text, nullable=False)
+    ai_rating = Column(Integer, nullable=False)
+    ai_confidence = Column(Float, default=0.0)
+    ai_explanation = Column(String(500), nullable=True)
+    ai_model = Column(String(100), nullable=False)
+
+    business = relationship("Business", back_populates="comments")
