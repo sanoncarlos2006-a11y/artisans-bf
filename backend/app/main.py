@@ -6,7 +6,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.core.config import BACKEND_DIR, settings
-from app.routes import auth_router, businesses_router, health_router
+from app.routes import auth_router, businesses_router, health_router, ai_router, comments_router, search_router
 
 
 app = FastAPI(
@@ -37,7 +37,9 @@ app.mount("/uploads", StaticFiles(directory=upload_dir), name="uploads")
 app.include_router(health_router)
 app.include_router(auth_router)
 app.include_router(businesses_router)
-
+app.include_router(ai_router)
+app.include_router(comments_router)
+app.include_router(search_router)
 
 @app.get("/docs", include_in_schema=False)
 def local_docs() -> HTMLResponse:

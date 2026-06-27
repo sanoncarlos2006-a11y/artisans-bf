@@ -25,3 +25,9 @@ class CommentRead(BaseModel):
 
 class CommentResponse(BaseModel):
     comment: CommentRead
+
+class AIRatingResponse(BaseModel):
+    rating: int
+    confidence: float = 1.0
+    explanation: str = ""
+    model: str = "local-keyword"
