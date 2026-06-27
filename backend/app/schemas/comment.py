@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CommentCreate(BaseModel):
@@ -19,6 +19,8 @@ class AIRatingResponse(BaseModel):
 
 
 class CommentRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     business_id: int
     content: Optional[str] = None
@@ -29,11 +31,10 @@ class CommentRead(BaseModel):
     justification: Optional[str] = None
     created_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
-
 
 class CommentResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     business_id: int
     user_id: Optional[int] = None
@@ -43,5 +44,3 @@ class CommentResponse(BaseModel):
     ai_explanation: Optional[str] = None
     ai_model: str
 
-    class Config:
-        from_attributes = True

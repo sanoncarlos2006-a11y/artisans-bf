@@ -83,6 +83,7 @@
     const statusClass =
       business.status === "published" ? "status-published" : "status-draft";
     const actions = options.actions || "";
+    const mapUrl = business.google_navigation_url || business.google_maps_url;
     return `
       <article class="business-card" data-business-id="${escapeHtml(business.id)}">
         <a class="business-photo" href="${detailUrl}">
@@ -115,6 +116,13 @@
             <a class="button button-secondary" target="_blank" rel="noreferrer" href="${whatsAppUrl(
               business
             )}">WhatsApp</a>
+            ${
+              mapUrl
+                ? `<a class="button button-secondary" target="_blank" rel="noreferrer" href="${escapeHtml(
+                    mapUrl
+                  )}">Google Maps</a>`
+                : ""
+            }
             ${actions}
           </div>
         </div>

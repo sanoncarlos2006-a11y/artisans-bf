@@ -2,9 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.business import Business
 from app.utils.distance import calculate_distance_km
-from app.utils.open_status import get_open_status_label
 from app.utils.text_normalizer import normalize_category, normalize_text
-from app.utils.hours_display import build_hours_label, opening_days_to_labels
 from app.utils.navigation_links import (
     build_google_maps_navigation_url,
     build_google_maps_place_url,
@@ -28,6 +26,10 @@ def business_to_search_item(
             travel_mode="walking",
         )
 
+    photos = [photo.file_path for photo in sorted(business.photos, key=lambda item: (item.created_at, item.id))]
+    rating = round(float(business.average_rating or 0), 2)
+    rating_count = int(business.ratings_count or 0)
+
     return {
         "id": business.id,
         "owner_id": business.owner_id,
@@ -38,25 +40,19 @@ def business_to_search_item(
         "latitude": business.latitude,
         "longitude": business.longitude,
         "status": business.status,
-        "average_rating": round(float(business.average_rating or 0), 2),
-        "reviews_count": int(business.reviews_count or 0),
+        "average_rating": rating,
+        "ratings_count": rating_count,
+        "rating_average": rating,
+        "rating_count": rating_count,
+        "reviews_count": rating_count,
         "distance_km": distance_km,
-        "open_status": get_open_status_label(
-            business.opening_days,
-            business.open_time,
-            business.close_time,
-            bool(business.is_temporarily_closed),
-        ),
-        "opening_days": business.opening_days,
-        "open_time": business.open_time,
-        "close_time": business.close_time,
-        "is_temporarily_closed": bool(business.is_temporarily_closed),
-        "opening_days_labels": opening_days_to_labels(business.opening_days),
-        "hours_label": build_hours_label(business.opening_days, business.open_time, business.close_time),
+        "opening_hours": business.opening_hours,
+        "hours_label": business.opening_hours,
         "google_maps_url": build_google_maps_place_url(business.latitude, business.longitude, business.name),
         "google_navigation_url": google_navigation_url,
         "openstreetmap_url": build_openstreetmap_url(business.latitude, business.longitude),
-        "photo_url": business.photo_url,
+        "photos": photos,
+        "photo_url": photos[0] if photos else None,
         "description": business.description,
     }
 

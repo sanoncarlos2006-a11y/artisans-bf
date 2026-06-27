@@ -1,4 +1,26 @@
 (function () {
+  function isLocalHost() {
+    return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+  }
+
+  function canAskBrowserLocation() {
+    return Boolean(navigator.geolocation) && (window.isSecureContext || isLocalHost());
+  }
+
+  function locationErrorMessage(error) {
+    if (!window.isSecureContext && !isLocalHost()) {
+      return "GPS bloque: ouvre le site en HTTPS ou sur localhost.";
+    }
+    if (!error) return "Geolocalisation non disponible sur ce navigateur.";
+    if (error.code === error.PERMISSION_DENIED) {
+      return "Position refusee. Autorise la localisation dans le navigateur.";
+    }
+    if (error.code === error.TIMEOUT) {
+      return "Position trop lente. Tu peux saisir latitude et longitude.";
+    }
+    return "Impossible de lire la position GPS. Tu peux saisir latitude et longitude.";
+  }
+
   function readNumberField(form, name) {
     const value = form.elements[name].value;
     return value === "" ? null : Number(value);
@@ -10,8 +32,8 @@
     if (!button || !form) return;
 
     button.addEventListener("click", () => {
-      if (!navigator.geolocation) {
-        window.UI.toast("Geolocalisation non disponible sur ce navigateur.", "warning");
+      if (!canAskBrowserLocation()) {
+        window.UI.toast(locationErrorMessage(), "warning");
         return;
       }
       button.disabled = true;
@@ -22,11 +44,11 @@
           window.UI.toast("Position GPS ajoutee.");
           button.disabled = false;
         },
-        () => {
-          window.UI.toast("Impossible de lire la position GPS.", "error");
+        (error) => {
+          window.UI.toast(locationErrorMessage(error), "error");
           button.disabled = false;
         },
-        { enableHighAccuracy: true, timeout: 9000 }
+        { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
       );
     });
   }

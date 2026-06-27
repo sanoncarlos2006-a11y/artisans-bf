@@ -41,7 +41,7 @@ def get_business_route(
     lng: float | None = Query(default=None),
     db: Session = Depends(get_db),
 ):
-    business = db.query(Business).filter(Business.id == business_id).first()
+    business = db.query(Business).filter(Business.id == business_id, Business.status == "published").first()
     if not business:
         raise HTTPException(status_code=404, detail="Commerce introuvable.")
 

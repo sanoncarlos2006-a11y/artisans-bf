@@ -191,6 +191,24 @@
     }
   }
 
+  function authIdentifier(payload) {
+    return String(payload.identifier || payload.phone || payload.email || "").trim();
+  }
+
+  function backendLoginPayload(payload) {
+    return {
+      identifier: authIdentifier(payload),
+      password: payload.password
+    };
+  }
+
+  function backendIdentifierPayload(payload) {
+    return {
+      ...payload,
+      identifier: authIdentifier(payload)
+    };
+  }
+
   async function request(path, options = {}) {
     const headers = new Headers(options.headers || {});
     const token = getToken();
@@ -224,8 +242,64 @@
     return payload;
   }
 
-  function cleanBusinessPayload(business) {
+  function normalizePhoto(photo) {
+    const rawPath =
+      typeof photo === "string"
+        ? photo
+        : photo && (photo.file_path || photo.photo_url || photo.url);
+    if (!rawPath) return "";
+    if (/^(https?:|data:|blob:)/.test(rawPath)) return rawPath;
+    if (rawPath.startsWith("/")) return `${window.AppConfig.apiBaseUrl}${rawPath}`;
+    return rawPath;
+  }
+
+  function normalizeComment(comment) {
+    if (!comment) return null;
     return {
+      id: comment.id,
+      business_id: comment.business_id,
+      author_name: comment.author_name || "Client",
+      content: comment.content || comment.comment || "",
+      rating: comment.rating ?? comment.ai_rating,
+      justification: comment.justification || comment.ai_explanation || "",
+      created_at: comment.created_at
+    };
+  }
+
+  function googleMapsPlaceUrl(business) {
+    const lat = Number(business.latitude);
+    const lng = Number(business.longitude);
+    if (Number.isNaN(lat) || Number.isNaN(lng)) return "";
+    const query = `${business.name || ""} ${lat},${lng}`.trim();
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  }
+
+  function googleMapsNavigationUrl(business, origin) {
+    const lat = Number(business.latitude);
+    const lng = Number(business.longitude);
+    if (Number.isNaN(lat) || Number.isNaN(lng)) return "";
+    const params = new URLSearchParams({
+      api: "1",
+      destination: `${lat},${lng}`,
+      travelmode: "walking"
+    });
+    if (origin) params.set("origin", `${origin.latitude},${origin.longitude}`);
+    return `https://www.google.com/maps/dir/?${params.toString()}`;
+  }
+
+  function openStreetMapUrl(business) {
+    const lat = Number(business.latitude);
+    const lng = Number(business.longitude);
+    if (Number.isNaN(lat) || Number.isNaN(lng)) return "";
+    return `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=18/${lat}/${lng}`;
+  }
+
+  function cleanBusinessPayload(business) {
+    const ratingAverage = Number(business.rating_average ?? business.average_rating ?? 0);
+    const ratingCount = Number(
+      business.rating_count ?? business.ratings_count ?? business.reviews_count ?? 0
+    );
+    const normalized = {
       id: business.id,
       name: business.name,
       category: business.category,
@@ -236,11 +310,20 @@
       latitude: Number(business.latitude),
       longitude: Number(business.longitude),
       status: business.status,
-      photos: business.photos || [],
-      rating_average: Number(business.rating_average || 0),
-      rating_count: Number(business.rating_count || 0),
-      comments: business.comments || []
+      photos: (business.photos || []).map(normalizePhoto).filter(Boolean),
+      rating_average: ratingAverage,
+      rating_count: ratingCount,
+      distance_km: business.distance_km,
+      google_maps_url: business.google_maps_url,
+      google_navigation_url: business.google_navigation_url,
+      openstreetmap_url: business.openstreetmap_url,
+      comments: (business.comments || []).map(normalizeComment).filter(Boolean)
     };
+    normalized.google_maps_url = normalized.google_maps_url || googleMapsPlaceUrl(normalized);
+    normalized.google_navigation_url =
+      normalized.google_navigation_url || googleMapsNavigationUrl(normalized);
+    normalized.openstreetmap_url = normalized.openstreetmap_url || openStreetMapUrl(normalized);
+    return normalized;
   }
 
   const DemoApi = {
@@ -296,9 +379,9 @@
       if (!store.users.some((user) => user.phone === phone)) {
         throw new Error("Aucun compte trouve avec ce telephone.");
       }
-      store.resetCodes[phone] = "2026";
+      store.resetCodes[phone] = "202600";
       saveStore(store);
-      return { reset_code: "2026", message: "Code de test pret." };
+      return { reset_code: "202600", message: "Code de test pret." };
     },
 
     async resetPassword(payload) {
@@ -416,9 +499,20 @@
         });
     },
 
+    async findBusiness(id) {
+      const store = getStore();
+      const business = store.businesses.find((item) => String(item.id) === String(id));
+      return business ? cleanBusinessPayload(business) : null;
+    },
+
+    async listComments(id) {
+      const business = await this.findBusiness(id);
+      return business ? business.comments : [];
+    },
+
     async addComment(id, payload) {
       const store = getStore();
-      const business = store.businesses.find((item) => item.id === id);
+      const business = store.businesses.find((item) => String(item.id) === String(id));
       if (!business) throw new Error("Commerce introuvable.");
       const rating = keywordRating(payload.content);
       const comment = {
@@ -465,12 +559,15 @@
     async register(payload) {
       return withFallback(
         async () => {
-          const data = await request("/auth/register", {
+          await request("/auth/register", {
             method: "POST",
             body: JSON.stringify(payload)
           });
-          const token = data.access_token || data.token;
-          if (token) setSession(token, data.user || data);
+          const data = await request("/auth/login", {
+            method: "POST",
+            body: JSON.stringify(backendLoginPayload(payload))
+          });
+          setSession(data.access_token, data.user);
           return data;
         },
         () => DemoApi.register(payload)
@@ -482,10 +579,9 @@
         async () => {
           const data = await request("/auth/login", {
             method: "POST",
-            body: JSON.stringify(payload)
+            body: JSON.stringify(backendLoginPayload(payload))
           });
-          const token = data.access_token || data.token;
-          if (token) setSession(token, data.user || { phone: payload.phone });
+          setSession(data.access_token, data.user);
           return data;
         },
         () => DemoApi.login(payload)
@@ -498,11 +594,16 @@
 
     async forgotPassword(payload) {
       return withFallback(
-        () =>
-          request("/auth/forgot-password", {
+        async () => {
+          const data = await request("/auth/forgot-password", {
             method: "POST",
-            body: JSON.stringify(payload)
-          }),
+            body: JSON.stringify(backendIdentifierPayload(payload))
+          });
+          return {
+            ...data,
+            reset_code: data.demo_reset_code || data.reset_code
+          };
+        },
         () => DemoApi.forgotPassword(payload)
       );
     },
@@ -512,7 +613,7 @@
         () =>
           request("/auth/reset-password", {
             method: "POST",
-            body: JSON.stringify(payload)
+            body: JSON.stringify(backendIdentifierPayload(payload))
           }),
         () => DemoApi.resetPassword(payload)
       );
@@ -520,47 +621,64 @@
 
     async createBusiness(payload) {
       return withFallback(
-        () =>
-          request("/businesses", {
+        async () => {
+          const data = await request("/businesses", {
             method: "POST",
             body: JSON.stringify(payload)
-          }),
+          });
+          return cleanBusinessPayload(data);
+        },
         () => DemoApi.createBusiness(payload)
       );
     },
 
     async myBusinesses() {
-      return withFallback(() => request("/my-businesses"), () => DemoApi.myBusinesses());
+      return withFallback(
+        async () => {
+          const data = await request("/my-businesses");
+          return data.map(cleanBusinessPayload);
+        },
+        () => DemoApi.myBusinesses()
+      );
     },
 
     async publishBusiness(id) {
       return withFallback(
-        () => request(`/businesses/${encodeURIComponent(id)}/publish`, { method: "PATCH" }),
+        async () => {
+          const data = await request(`/businesses/${encodeURIComponent(id)}/publish`, { method: "PATCH" });
+          return cleanBusinessPayload(data);
+        },
         () => DemoApi.publishBusiness(id)
       );
     },
 
     async unpublishBusiness(id) {
       return withFallback(
-        () =>
-          request(`/businesses/${encodeURIComponent(id)}/unpublish`, {
+        async () => {
+          const data = await request(`/businesses/${encodeURIComponent(id)}/unpublish`, {
             method: "PATCH"
-          }),
+          });
+          return cleanBusinessPayload(data);
+        },
         () => DemoApi.unpublishBusiness(id)
       );
     },
 
     async uploadPhotos(id, files) {
       return withFallback(
-        () => {
-          const formData = new FormData();
-          Array.from(files || [])
-            .slice(0, 3)
-            .forEach((file) => formData.append("photos", file));
-          return request(`/businesses/${encodeURIComponent(id)}/photos`, {
-            method: "POST",
-            body: formData
-          });
+        async () => {
+          const uploaded = [];
+          for (const file of Array.from(files || []).slice(0, 3)) {
+            const formData = new FormData();
+            formData.append("file", file);
+            uploaded.push(
+              await request(`/businesses/${encodeURIComponent(id)}/photos`, {
+                method: "POST",
+                body: formData
+              })
+            );
+          }
+          return { photos: uploaded.map(normalizePhoto).filter(Boolean) };
         },
         () => DemoApi.uploadPhotos(id, files)
       );
@@ -575,23 +693,60 @@
       });
       const suffix = query.toString() ? `?${query.toString()}` : "";
       return withFallback(
-        () => request(`/search${suffix}`),
+        async () => {
+          const data = await request(`/search${suffix}`);
+          return data.map(cleanBusinessPayload);
+        },
         () => DemoApi.searchBusinesses(params)
       );
     },
 
+    async businessDetail(id) {
+      return withFallback(
+        async () => {
+          const data = await request(`/businesses/${encodeURIComponent(id)}`);
+          const business = cleanBusinessPayload(data);
+          try {
+            const comments = await request(`/businesses/${encodeURIComponent(id)}/comments`);
+            business.comments = comments.map(normalizeComment).filter(Boolean);
+          } catch (error) {
+            business.comments = [];
+          }
+          return business;
+        },
+        () => DemoApi.findBusiness(id)
+      );
+    },
+
+    async listComments(id) {
+      return withFallback(
+        async () => {
+          const data = await request(`/businesses/${encodeURIComponent(id)}/comments`);
+          return data.map(normalizeComment).filter(Boolean);
+        },
+        () => DemoApi.listComments(id)
+      );
+    },
+
     async findBusiness(id) {
+      const business = await this.businessDetail(id);
+      if (business) return business;
       const businesses = await this.searchBusinesses({});
-      return businesses.find((business) => String(business.id) === String(id));
+      return businesses.find((item) => String(item.id) === String(id));
     },
 
     async addComment(id, payload) {
       return withFallback(
-        () =>
-          request(`/businesses/${encodeURIComponent(id)}/comments`, {
+        async () => {
+          const data = await request(`/businesses/${encodeURIComponent(id)}/comments`, {
             method: "POST",
-            body: JSON.stringify(payload)
-          }),
+            body: JSON.stringify({
+              comment: payload.comment || payload.content,
+              user_id: payload.user_id
+            })
+          });
+          return { comment: normalizeComment({ ...data, author_name: payload.author_name }) };
+        },
         () => DemoApi.addComment(id, payload)
       );
     },
@@ -601,10 +756,13 @@
         () =>
           request("/ai/rate-comment", {
             method: "POST",
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ comment: payload.comment || payload.content })
           }),
         () => DemoApi.rateComment(payload)
       );
-    }
+    },
+
+    googleMapsNavigationUrl,
+    googleMapsPlaceUrl
   };
 })();

@@ -501,6 +501,34 @@ button {
   width: 100%;
 }
 
+.detail-tile {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  min-height: 150px;
+  border: 0;
+  color: #fff;
+  background:
+    linear-gradient(135deg, rgba(20, 108, 67, 0.92), rgba(194, 79, 26, 0.86)),
+    #146c43;
+  text-align: center;
+}
+
+.detail-tile:hover {
+  filter: brightness(0.96);
+}
+
+.detail-tile strong {
+  font-size: 1.35rem;
+}
+
+.detail-tile small {
+  max-width: 14rem;
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 800;
+}
+
 .comment {
   padding: 12px;
   border: 1px solid var(--line);

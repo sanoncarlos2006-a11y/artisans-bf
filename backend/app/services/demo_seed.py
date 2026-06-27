@@ -9,9 +9,9 @@ from app.models import Business, User
 
 DEMO_OWNER = {
     "full_name": "Proprietaire Demo",
-    "email": "demo.owner@example.test",
-    "phone": "70000000",
-    "password": "DemoPassword123",
+    "email": "demo@artisansbf.local",
+    "phone": "+22670000000",
+    "password": "demo1234",
 }
 
 DEMO_BUSINESSES = [
@@ -22,6 +22,7 @@ DEMO_BUSINESSES = [
         "latitude": 12.3714,
         "longitude": -1.5197,
         "address_description": "Ouagadougou, quartier Gounghin, pres du marche.",
+        "description": "Retouches, tenues traditionnelles et commandes rapides pour familles et ceremonies.",
         "opening_hours": "Lundi-Samedi 08:00-18:00",
         "status": "published",
     },
@@ -32,6 +33,7 @@ DEMO_BUSINESSES = [
         "latitude": 12.3972,
         "longitude": -1.4869,
         "address_description": "Ouagadougou, secteur 28, proche de la voie principale.",
+        "description": "Diagnostic, vidange, pneus et depannage moto avec contact direct.",
         "opening_hours": "Lundi-Dimanche 07:30-19:00",
         "status": "published",
     },
@@ -42,6 +44,7 @@ DEMO_BUSINESSES = [
         "latitude": 11.1771,
         "longitude": -4.2979,
         "address_description": "Bobo-Dioulasso, quartier Dioulassoba, rue commerciale.",
+        "description": "Coiffure homme, femme et enfant, soins rapides et accueil sur rendez-vous.",
         "opening_hours": "Mardi-Dimanche 09:00-20:00",
         "status": "published",
     },
@@ -52,6 +55,7 @@ DEMO_BUSINESSES = [
         "latitude": 12.3296,
         "longitude": -1.5362,
         "address_description": "Ouagadougou, quartier Pissy, derriere la station.",
+        "description": "Fabrication et reparation de meubles, portes et amenagements sur mesure.",
         "opening_hours": "Lundi-Samedi 08:00-17:30",
         "status": "draft",
     },
@@ -62,6 +66,7 @@ DEMO_BUSINESSES = [
         "latitude": 11.1649,
         "longitude": -4.3052,
         "address_description": "Bobo-Dioulasso, secteur 21, proche du rond-point.",
+        "description": "Installation electrique, depannage domestique et entretien de tableaux.",
         "opening_hours": "Lundi-Vendredi 08:00-18:00",
         "status": "unpublished",
     },
@@ -112,6 +117,7 @@ def _upsert_demo_business(db: Session, owner: User, payload: dict[str, object]) 
     business.latitude = float(payload["latitude"])
     business.longitude = float(payload["longitude"])
     business.address_description = str(payload["address_description"])
+    business.description = str(payload["description"])
     business.opening_hours = str(payload["opening_hours"])
     business.status = str(payload["status"])
     business.average_rating = 0.0
