@@ -9,3 +9,4 @@ pwdlib[argon2]==0.3.0
 ollama==0.6.2
 pytest
 httpx
+pwdlib
