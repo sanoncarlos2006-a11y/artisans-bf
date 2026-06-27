@@ -1,35 +1,27 @@
 from datetime import datetime
+from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
-
-
-def _strip_required(value: str) -> str:
-    stripped = value.strip()
-    if not stripped:
-        raise ValueError("field must not be empty")
-    return stripped
+from pydantic import BaseModel, Field
 
 
-class CommentBase(BaseModel):
-    content: str = Field(min_length=1)
-
-    @field_validator("content")
-    @classmethod
-    def strip_content(cls, value: str) -> str:
-        return _strip_required(value)
+class CommentCreate(BaseModel):
+    content: str = Field(..., min_length=2)
+    author_name: Optional[str] = "Client"
 
 
-class CommentCreate(CommentBase):
-    pass
-
-
-class CommentRead(CommentBase):
-    model_config = ConfigDict(from_attributes=True)
-
+class CommentRead(BaseModel):
     id: int
     business_id: int
-    user_id: int | None = None
-    ai_rating: float | None = Field(default=None, ge=0, le=5)
-    ai_sentiment: str | None = None
-    ai_reason: str | None = None
-    created_at: datetime
+    content: str
+    author_name: Optional[str] = None
+    rating: Optional[float] = None
+    ai_rating: Optional[float] = None
+    justification: Optional[str] = None
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class CommentResponse(BaseModel):
+    comment: CommentRead
